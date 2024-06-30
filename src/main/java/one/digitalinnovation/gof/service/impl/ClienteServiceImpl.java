@@ -2,13 +2,14 @@ package one.digitalinnovation.gof.service.impl;
 
 import java.util.Optional;
 
+import one.digitalinnovation.gof.model.ClienteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import one.digitalinnovation.gof.model.Cliente;
-import one.digitalinnovation.gof.model.ClienteRepository;
+import one.digitalinnovation.gof.repository.ClienteRepository;
 import one.digitalinnovation.gof.model.Endereco;
-import one.digitalinnovation.gof.model.EnderecoRepository;
+import one.digitalinnovation.gof.repository.EnderecoRepository;
 import one.digitalinnovation.gof.service.ClienteService;
 import one.digitalinnovation.gof.service.ViaCepService;
 
@@ -48,7 +49,23 @@ public class ClienteServiceImpl implements ClienteService {
 
 	@Override
 	public void inserir(Cliente cliente) {
-		salvarClienteComCep(cliente);
+		Cliente client = null;
+		if (cliente.getTypeUser().equalsIgnoreCase("Pessoa Juridica")) {
+			client = ClienteBuilder.builder()
+					.cnpj(cliente.getCnpj())
+					.nome(cliente.getNome())
+					.endereco(cliente.getEndereco())
+					.typeUser(cliente.getTypeUser())
+					.build();
+		} else {
+			client = ClienteBuilder.builder()
+					.cpf(cliente.getCpf())
+					.nome(cliente.getNome())
+					.endereco(cliente.getEndereco())
+					.typeUser(cliente.getTypeUser())
+					.build();
+		}
+		salvarClienteComCep(client);
 	}
 
 	@Override
